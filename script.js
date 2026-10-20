@@ -3,11 +3,11 @@ const CONFIG = {
   location: { lat: -6.5975, lng: 106.7997, zoom: 16, name: "Tempat pertama kali kita jalan 💕" },
   letter: "Hey, pretty boy. \n\nThere’s something i’ve been wanting to tell you… ever since you came into my life, everything just felt a whole lot brighter. make sure to read this until the end, okay? ",
   songs: [
-    { title: "Superpowers", artist: "Daniel Caesar", cover: "assets/picts/cover1.jpg", src: "assets/musics/Superpowers.mp3" },
-    { title: "Nothing", artist: "Bruno Major", cover: "assets/picts/cover2.jpg", src: "assets/musics/Nothing.mp3" },
-    { title: "Can't Help Falling in Love", artist: "Elvis Presley", cover: "assets/picts/cover3.jpg", src: "assets/musics/CantHelpFallingInLove.mp3" },
-    { title: "If", artist: "Bread", cover: "assets/picts/cover4.jpg", src: "assets/musics/If.mp3" },
-    { title: "Love", artist: "Wave to Earth", cover: "assets/picts/cover5.jpg", src: "assets/musics/Love.mp3" }
+    { title: "Superpowers", artist: "Daniel Caesar", cover: "assets/picts/Cover1.jpg", src: "assets/musics/Superpowers.mp3" },
+    { title: "Nothing", artist: "Bruno Major", cover: "assets/picts/Cover2.jpg", src: "assets/musics/Nothing.mp3" },
+    { title: "Can't Help Falling in Love", artist: "Elvis Presley", cover: "assets/picts/Cover3.jpg", src: "assets/musics/CantHelpFallingInLove.mp3" },
+    { title: "If", artist: "Bread", cover: "assets/picts/Cover4.jpg", src: "assets/musics/If.mp3" },
+    { title: "Love", artist: "Wave to Earth", cover: "assets/picts/Cover5.jpg", src: "assets/musics/Love.mp3" }
   ],
   photos: [
     { img: "assets/picts/Love1.jpg", cap: "Late Night Chats 🌙", d: "Listening to you ramble about your day is literally my favorite part of the evening." },
@@ -73,6 +73,7 @@ const CONFIG = {
 /* =========================== */
 
 const $ = id => document.getElementById(id);
+
 function go(from, to, load, cb){
   const a=$(from); a.classList.add('out');
   setTimeout(()=>{
@@ -82,6 +83,7 @@ function go(from, to, load, cb){
     runLoader(typeof load==='number'?load:CONFIG.loadingMs, show);
   },700);
 }
+
 function runLoader(ms, done){
   const L=$('loader'), bar=$('bar'), msg=$('loadMsg'), m=CONFIG.loadingMessages;
   L.classList.add('show'); bar.style.transition='none'; bar.style.width='0'; bar.offsetWidth;
@@ -109,7 +111,7 @@ $('env').addEventListener('click',()=>{
     else{el.innerHTML=CONFIG.letter; $('to3').style.display='inline-block';}
   },1400);
 });
-$('to3').onclick=()=>go('s2','s4',true);
+$('to3').onclick=()=>go('s2','s4',false);
 
 // STEP 0: pilih lagu (vinyl + tracklist)
 const audio=new Audio(); audio.loop=true; audio.volume=.7;
@@ -166,18 +168,23 @@ document.addEventListener('mousemove',e=>{
   }
 });
 
-// STEP 6: celebration
+// STEP 6: celebration (TOMBOL YES FIXED)
 $('yes').onclick=()=>{
-  $('catgif').src=CONFIG.catGif;
+  const cat = $('catgif');
+  if(cat) cat.src = CONFIG.catGif;
   go('s5','celebrate',3000);
   setTimeout(()=>{
     const end=Date.now()+5000;
     (function frame(){
-      confetti({particleCount:6,angle:60,spread:70,origin:{x:0},colors:['#ff8fab','#ffc8dd','#d9a38f','#fff']});
-      confetti({particleCount:6,angle:120,spread:70,origin:{x:1},colors:['#ff8fab','#ffc8dd','#d9a38f','#fff']});
+      if(typeof confetti === 'function'){
+        confetti({particleCount:6,angle:60,spread:70,origin:{x:0},colors:['#ff8fab','#ffc8dd','#d9a38f','#fff']});
+        confetti({particleCount:6,angle:120,spread:70,origin:{x:1},colors:['#ff8fab','#ffc8dd','#d9a38f','#fff']});
+      }
       if(Date.now()<end) requestAnimationFrame(frame);
     })();
-    confetti({particleCount:180,spread:120,origin:{y:.6},shapes:['circle'],scalar:1.2});
+    if(typeof confetti === 'function'){
+      confetti({particleCount:180,spread:120,origin:{y:.6},shapes:['circle'],scalar:1.2});
+    }
   },3750);
   startTimer();
 };
@@ -197,6 +204,7 @@ $('tgBtn').onclick=()=>{
   window.open('https://t.me/'+CONFIG.tgUser+'?text='+encodeURIComponent(CONFIG.tgMessage),'_blank');
 };
 $('replay').onclick=()=>location.reload();
+
 function startTimer(){
   const t0=Date.now();
   setInterval(()=>{
@@ -216,6 +224,7 @@ CONFIG.love10.forEach((it,i)=>{
   d.innerHTML='<div class="fr"><b class="ph">🌸</b><img src="'+it.img+'" alt="" onerror="this.remove()"></div><span class="tg" style="background:'+TAGC[i%5]+';'+(right?'right:-4%':'left:-4%')+'">'+it.t+'</span>';
   $('stage').appendChild(d);
 });
+
 function startTen(){
   const bar=$('tenBar'), s=CONFIG.tenSeconds;
   bar.style.transition='none'; bar.style.width='0'; bar.offsetWidth;
@@ -231,6 +240,7 @@ function runBar(bar,load,btn,secs){
   bar.style.transition='width '+secs+'s linear'; bar.style.width='100%';
   clearTimeout(bar._t); bar._t=setTimeout(()=>{load.classList.add('done'); btn.classList.add('show');},secs*1000);
 }
+
 function setFrame(el,src,emoji){
   el.innerHTML='<b class="ph">'+emoji+'</b><img src="'+src+'" alt="" onerror="this.remove()">';
 }
@@ -252,12 +262,14 @@ $('itNext').onclick=()=>{
   else go('s11','s12',false,startHello);
 };
 
-// STEP 0d: our first hello (FIXED IMAGE LOADING)
+// STEP 0d: our first hello
 function startHello(){
   const H = CONFIG.hello;
   const img = $('helloImg');
-  img.style.display = 'block';
-  img.src = H.img;
+  if(img){
+    img.style.display = 'block';
+    img.src = H.img;
+  }
   $('helloCap').textContent = H.cap; 
   $('helloDesc').textContent = H.desc;
   runBar($('hBar'), $('hLoad'), $('hNext'), CONFIG.helloSeconds);
@@ -277,7 +289,9 @@ CONFIG.apps.forEach(a=>{
     if(a.ok){
       appDone=true; b.classList.add('win'); $('apps').classList.add('done');
       $('appMsg').textContent=CONFIG.rightMsg; $('appNext').classList.add('show');
-      confetti({particleCount:90,spread:80,origin:{y:.55},colors:['#2aabee','#ff8fab','#ffd93b','#fff']});
+      if(typeof confetti === 'function'){
+        confetti({particleCount:90,spread:80,origin:{y:.55},colors:['#2aabee','#ff8fab','#ffd93b','#fff']});
+      }
     } else {
       ic.classList.remove('shake'); ic.offsetWidth; ic.classList.add('shake');
       $('appMsg').textContent=CONFIG.wrongMsgs[wi++%CONFIG.wrongMsgs.length];
@@ -285,7 +299,7 @@ CONFIG.apps.forEach(a=>{
   };
   $('apps').appendChild(b);
 });
-$('appNext').onclick=()=>CONFIG.showLetter?go('sApps','s2'):go('sApps','s4',true);
+$('appNext').onclick=()=>CONFIG.showLetter?go('sApps','s2'):go('sApps','s4');
 
 // dekorasi mengambang global
 (function(){
@@ -301,5 +315,7 @@ $('appNext').onclick=()=>CONFIG.showLetter?go('sApps','s2'):go('sApps','s4',true
 // teks pertanyaan
 (function(){
   const t=$('qTitle'); const words=['Would','you','be','my','boyfriend?','🥺💕'];
-  words.forEach((w,i)=>{const s=document.createElement('span'); s.className='w'; s.textContent=w; s.style.animationDelay=(i*0.45)+'s'; t.appendChild(s);});
+  if(t){
+    words.forEach((w,i)=>{const s=document.createElement('span'); s.className='w'; s.textContent=w; s.style.animationDelay=(i*0.45)+'s'; t.appendChild(s);});
+  }
 })();

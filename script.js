@@ -210,7 +210,7 @@ function startTimer(){
   setInterval(()=>{
     let s=Math.floor((Date.now()-t0)/1000);
     const m=Math.floor(s/60), h=Math.floor(m/60);
-    $('timer').textContent=(h?h+' jam ':'')+(m%60?m%60+' menit ':'')+(s%60)+' detik 💞';
+    $('timer').textContent=(h?h+' hour ':'')+(m%60?m%60+' minute ':'')+(s%60)+' second 💞';
   },1000);
 }
 
